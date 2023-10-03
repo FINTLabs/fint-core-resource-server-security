@@ -1,4 +1,4 @@
-# FINT Spring Boot Template project
+# FINT core resource server
 
 ## Setting up a new project based on the template
 ### Clone
