@@ -6,4 +6,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties("fint.security")
 public class FintSecurity {
+
+    private boolean enabled;
+    private boolean orgId;
+    private boolean component;
+
 }
