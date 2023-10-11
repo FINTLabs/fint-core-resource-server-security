@@ -1,6 +1,7 @@
 package no.fintlabs.resourceServer.security.config;
 
 import lombok.RequiredArgsConstructor;
+import no.vigoiks.resourceserver.security.FintJwtDefaultConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -16,7 +17,15 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.build();
+        return fintSecurity.isEnabled() ? requireJwt(http) : http.build();
+    }
+
+    private SecurityWebFilterChain requireJwt(ServerHttpSecurity http) {
+        return http.oauth2ResourceServer(oAuth2ResourceServerSpec ->
+                oAuth2ResourceServerSpec.jwt(jwtSpec ->
+                        jwtSpec.jwtAuthenticationConverter(new FintJwtDefaultConverter())
+                )
+        ).build();
     }
 
 }
