@@ -21,11 +21,18 @@ public class SecurityConfiguration {
     }
 
     private SecurityWebFilterChain requireJwt(ServerHttpSecurity http) {
-        return http.oauth2ResourceServer(oAuth2ResourceServerSpec ->
-                oAuth2ResourceServerSpec.jwt(jwtSpec ->
-                        jwtSpec.jwtAuthenticationConverter(new FintJwtDefaultConverter())
+        http
+                .oauth2ResourceServer(oauth2ResourceServerSpec ->
+                        oauth2ResourceServerSpec.jwt(
+                                jwtSpec -> jwtSpec.jwtAuthenticationConverter(new FintJwtDefaultConverter())
+                        )
                 )
-        ).build();
+                .authorizeExchange(authorizeExchangeSpec ->
+                        authorizeExchangeSpec
+                                .anyExchange()
+                                .authenticated());
+
+        return http.build();
     }
 
     private SecurityWebFilterChain permitAll(ServerHttpSecurity http) {
