@@ -17,7 +17,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return fintSecurity.isEnabled() ? requireJwt(http) : http.build();
+        return fintSecurity.isEnabled() ? requireJwt(http) : permitAll(http);
     }
 
     private SecurityWebFilterChain requireJwt(ServerHttpSecurity http) {
@@ -26,6 +26,14 @@ public class SecurityConfiguration {
                         jwtSpec.jwtAuthenticationConverter(new FintJwtDefaultConverter())
                 )
         ).build();
+    }
+
+    private SecurityWebFilterChain permitAll(ServerHttpSecurity http) {
+        return permitAllExchanges(http).build();
+    }
+
+    private ServerHttpSecurity permitAllExchanges(ServerHttpSecurity http) {
+        return http.authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec.anyExchange().permitAll());
     }
 
 }
