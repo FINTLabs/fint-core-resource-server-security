@@ -25,4 +25,12 @@ public class CorePrincipal extends JwtAuthenticationToken {
         this.roles = roles;
     }
 
+    public boolean hasRole(String role) {
+        return roles.contains(role);
+    }
+
+    public boolean orgIdsMatch(String orgId) {
+        return this.orgId.equals(orgId);
+    }
+
 }
