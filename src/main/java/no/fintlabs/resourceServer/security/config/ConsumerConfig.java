@@ -17,4 +17,8 @@ public class ConsumerConfig {
     @Value("${fint.consumer.orgId}")
     private String orgId;
 
+    public String getComponent() {
+        return String.format("%s_%s", domain, packageName);
+    }
+
 }
