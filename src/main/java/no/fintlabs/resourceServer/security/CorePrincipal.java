@@ -14,14 +14,19 @@ public class CorePrincipal extends JwtAuthenticationToken {
 
     private final String orgId;
     private final String scope;
+    private final String username;
 
     @Getter(AccessLevel.NONE)
     private final HashSet<String> roles;
 
-    public CorePrincipal(Jwt jwt, Collection<? extends GrantedAuthority> authorities, String orgId, String scope, HashSet<String> roles) {
+    public CorePrincipal(Jwt jwt,
+                         Collection<? extends GrantedAuthority> authorities,
+                         String orgId, String scope, String username,
+                         HashSet<String> roles) {
         super(jwt, authorities);
         this.orgId = orgId;
         this.scope = scope;
+        this.username = username;
         this.roles = roles;
     }
 
