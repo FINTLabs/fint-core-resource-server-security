@@ -1,6 +1,7 @@
 package no.fintlabs.resourceServer.security.config;
 
 import lombok.RequiredArgsConstructor;
+import no.fintlabs.resourceServer.security.CorePrincipalConverter;
 import no.vigoiks.resourceserver.security.FintJwtDefaultConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,7 @@ public class SecurityConfiguration {
         http
                 .oauth2ResourceServer(oauth2ResourceServerSpec ->
                         oauth2ResourceServerSpec.jwt(
-                                jwtSpec -> jwtSpec.jwtAuthenticationConverter(new FintJwtDefaultConverter())
+                                jwtSpec -> jwtSpec.jwtAuthenticationConverter(new CorePrincipalConverter())
                         )
                 )
                 .authorizeExchange(authorizeExchangeSpec ->
