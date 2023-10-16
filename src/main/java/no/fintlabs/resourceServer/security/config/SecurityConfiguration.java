@@ -54,8 +54,8 @@ public class SecurityConfiguration {
                     return new AuthorizationDecision(true);
                 }
 
-                boolean isComponentValid = !componentRequired || corePrincipal.hasRole(getComponentRole());
-                boolean isOrgIdValid = !orgIdRequired || corePrincipal.orgIdsMatch(consumerConfig.getOrgId());
+                boolean isComponentValid = validateComponent(corePrincipal, componentRequired);
+                boolean isOrgIdValid = validateOrgId(corePrincipal, orgIdRequired);
 
                 return new AuthorizationDecision(isComponentValid && isOrgIdValid);
             }
@@ -63,6 +63,14 @@ public class SecurityConfiguration {
             log.warn("(SecurityConfiguration): Jwt is not a CorePrincipal! ");
             return new AuthorizationDecision(false);
         });
+    }
+
+    private boolean validateComponent(CorePrincipal corePrincipal, boolean componentRequired) {
+        return !componentRequired || corePrincipal.hasRole(getComponentRole());
+    }
+
+    private boolean validateOrgId(CorePrincipal corePrincipal, boolean orgIdRequired) {
+        return !orgIdRequired || corePrincipal.getOrgId().equals(consumerConfig.getOrgId());
     }
 
     private String getComponentRole() {
