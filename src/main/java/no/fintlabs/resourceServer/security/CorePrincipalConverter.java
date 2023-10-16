@@ -21,22 +21,14 @@ public class CorePrincipalConverter extends FintJwtDefaultConverter {
 
     @Override
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
-        HashSet<String> roles = new HashSet<>(jwt.getClaimAsStringList(ROLES));
-        HashSet<String> scopes = new HashSet<>(jwt.getClaimAsStringList(SCOPE));
-        String orgId = jwt.getClaimAsString(FINT_ASSET_IDS);
-        String username = jwt.getClaimAsString(USERNAME);
-
-        return super.convert(jwt)
-                .flatMap(abstractAuthenticationToken ->
-                        Mono.just(new CorePrincipal(
-                                jwt,
-                                abstractAuthenticationToken.getAuthorities(),
-                                orgId,
-                                username,
-                                scopes,
-                                roles)
-                        )
-                );
+        return super.convert(jwt).map(token -> new CorePrincipal(
+                jwt,
+                token.getAuthorities(),
+                jwt.getClaimAsString(FINT_ASSET_IDS),
+                jwt.getClaimAsString(USERNAME),
+                new HashSet<>(jwt.getClaimAsStringList(SCOPE)),
+                new HashSet<>(jwt.getClaimAsStringList(ROLES))
+        ));
     }
 
 }
