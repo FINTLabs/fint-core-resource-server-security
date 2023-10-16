@@ -49,20 +49,26 @@ public class SecurityConfiguration {
             if (auth instanceof CorePrincipal corePrincipal) {
                 boolean componentRequired = fintSecurity.isComponentRequired();
                 boolean orgIdRequired = fintSecurity.isOrgIdRequired();
+                boolean scopeRequired = fintSecurity.isScopeRequired();
 
-                if (!componentRequired && !orgIdRequired) {
+                if (!componentRequired && !orgIdRequired && !scopeRequired) {
                     return new AuthorizationDecision(true);
                 }
 
                 boolean isComponentValid = validateComponent(corePrincipal, componentRequired);
                 boolean isOrgIdValid = validateOrgId(corePrincipal, orgIdRequired);
+                boolean isScopeValid = validateScope(corePrincipal, scopeRequired);
 
-                return new AuthorizationDecision(isComponentValid && isOrgIdValid);
+                return new AuthorizationDecision(isComponentValid && isOrgIdValid && isScopeValid);
             }
 
             log.warn("(SecurityConfiguration): Jwt is not a CorePrincipal! ");
             return new AuthorizationDecision(false);
         });
+    }
+
+    private boolean validateScope(CorePrincipal corePrincipal, boolean scopeRequired) {
+        return !scopeRequired || corePrincipal.hasScope(getScope());
     }
 
     private boolean validateComponent(CorePrincipal corePrincipal, boolean componentRequired) {
@@ -71,6 +77,10 @@ public class SecurityConfiguration {
 
     private boolean validateOrgId(CorePrincipal corePrincipal, boolean orgIdRequired) {
         return !orgIdRequired || corePrincipal.getOrgId().equals(consumerConfig.getOrgId());
+    }
+
+    private String getScope() {
+        return String.format("fint-%s", fintSecurity.getRoleType().toLowerCase());
     }
 
     private String getComponentRole() {
