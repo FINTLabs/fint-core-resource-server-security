@@ -74,7 +74,7 @@ public class SecurityConfiguration {
     }
 
     private String getComponentRole() {
-        return String.format("FINT_Client_%s", consumerConfig.getComponent());
+        return String.format("FINT_%s_%s", fintSecurity.getRoleType(), consumerConfig.getComponent());
     }
 
     private SecurityWebFilterChain permitAll(ServerHttpSecurity http) {
