@@ -13,21 +13,28 @@ import java.util.HashSet;
 public class CorePrincipal extends JwtAuthenticationToken {
 
     private final String orgId;
-    private final String scope;
     private final String username;
+
+    @Getter(AccessLevel.NONE)
+    private final HashSet<String> scopes;
 
     @Getter(AccessLevel.NONE)
     private final HashSet<String> roles;
 
     public CorePrincipal(Jwt jwt,
                          Collection<? extends GrantedAuthority> authorities,
-                         String orgId, String scope, String username,
+                         String orgId, String username,
+                         HashSet<String> scopes,
                          HashSet<String> roles) {
         super(jwt, authorities);
         this.orgId = orgId;
-        this.scope = scope;
+        this.scopes = scopes;
         this.username = username;
         this.roles = roles;
+    }
+
+    public boolean hasScope(String scope) {
+        return scopes.contains(scope);
     }
 
     public boolean hasRole(String role) {

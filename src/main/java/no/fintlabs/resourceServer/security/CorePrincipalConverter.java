@@ -22,8 +22,8 @@ public class CorePrincipalConverter extends FintJwtDefaultConverter {
     @Override
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
         HashSet<String> roles = new HashSet<>(jwt.getClaimAsStringList(ROLES));
+        HashSet<String> scopes = new HashSet<>(jwt.getClaimAsStringList(SCOPE));
         String orgId = jwt.getClaimAsString(FINT_ASSET_IDS);
-        String scope = jwt.getClaimAsString(SCOPE);
         String username = jwt.getClaimAsString(USERNAME);
 
         return super.convert(jwt)
@@ -32,8 +32,8 @@ public class CorePrincipalConverter extends FintJwtDefaultConverter {
                                 jwt,
                                 abstractAuthenticationToken.getAuthorities(),
                                 orgId,
-                                scope,
                                 username,
+                                scopes,
                                 roles)
                         )
                 );
