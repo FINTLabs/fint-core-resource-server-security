@@ -1,19 +1,26 @@
 # FINT core resource server
 
-## Setting up a new project based on the template
-### Clone
-```shell
-git clone https://github.com/FINTLabs/fint-spring-boot-template-project.git <your project name>
-cd <your project name>
-rm -Rf .git
-git init
-```
+## Project Overview
+This project provides a resource server with a focus on security configurations, tailored for a Spring WebFlux environment. It includes custom JWT-based authentication mechanisms and role-based authorizations.
 
-Or press **Use this template** and setup your new repository
+### Key Components:
+- **ConsumerConfig**: Manages the configurations related to the consumer of the resource server.
+- **FintSecurity**: Handles security settings and role types.
+- **SecurityConfiguration**: Central configuration for Spring WebFlux security.
+- **CorePrincipal**: Represents the authenticated user, containing details such as organization ID, scope, username, and roles.
+- **CorePrincipalConverter**: Converts JWT claims into the CorePrincipal object.
 
-### Update deployment files
-Update the following files to reflect your project
-* Dockerfile
-* k8s.yaml
-* Jenkins
 
+### Configuration Setup
+To set up the project, you'll need to configure the following properties:
+
+#### In FintSecurity:
+1. **fint.security.enabled**: Enables or disables the security. Default is true.
+2. **fint.security.orgid**: Determines if an organization ID is required. Default is true.
+3. **fint.security.component**: Indicates if a component is required. Default is true.
+4. **fint.security.role-type**: Sets the role type. Default is Client, the only other available value is Adapter
+
+#### In ConsumerConfig:
+1. **fint.consumer.domain**: Specifies the domain of the consumer.
+2. **fint.consumer.package**: Denotes the package name.
+3. **fint.consumer.orgId**: Represents the organization ID.
