@@ -1,9 +1,11 @@
 package no.fintlabs.core.resource.server.security.config;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Data
 @Configuration
 public class FintSecurity {
@@ -47,7 +49,8 @@ public class FintSecurity {
                     return roleType;
                 }
             }
-            throw new IllegalArgumentException("Invalid role type: " + value);
+            log.error("Invalid role type: {} Defaulting to Client.", value);
+            return CLIENT;
         }
 
         @Override
