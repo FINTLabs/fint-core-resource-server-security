@@ -8,13 +8,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ConsumerConfig {
 
-    @Value("${fint.consumer.domain}")
+    @Value("${fint.consumer.domain:}")
     private String domain;
 
-    @Value("${fint.consumer.package}")
+    @Value("${fint.consumer.package:}")
     private String packageName;
 
-    @Value("${fint.consumer.orgId}")
+    @Value("${fint.consumer.orgId:}")
     private String orgId;
 
     public String getComponent() {

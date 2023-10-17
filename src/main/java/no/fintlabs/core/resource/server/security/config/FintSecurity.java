@@ -17,7 +17,7 @@ public class FintSecurity {
     @Value("${fint.security.component:true}")
     private boolean componentRequired;
 
-    @Value("${fint.security.scope}")
+    @Value("${fint.security.scope:true}")
     private boolean scopeRequired;
 
     private RoleType roleType;
