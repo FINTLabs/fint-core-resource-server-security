@@ -62,7 +62,7 @@ public class SecurityConfiguration {
                 return new AuthorizationDecision(isComponentValid && isOrgIdValid && isScopeValid);
             }
 
-            log.warn("(SecurityConfiguration): Jwt is not a CorePrincipal! ");
+            log.warn("SecurityConfiguration: Jwt is not a CorePrincipal! Denying Request!");
             return new AuthorizationDecision(false);
         });
     }
