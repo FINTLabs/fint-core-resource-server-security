@@ -1,26 +1,62 @@
-# FINT core resource server security
+# Fint Core Resource Server Security
 
-## Project Overview
-This project provides a resource server with a focus on security configurations, tailored for a Spring WebFlux environment. It includes custom JWT-based authentication mechanisms and role-based authorizations.
+This library provides a `SecurityConfiguration` designed for Fint projects. Its primary functions include:
+1. Configuring security settings for Fint projects.
+2. Converting any JWT (JSON Web Token) into a `CorePrincipal` object.
 
-### Key Components:
-- **ConsumerConfig**: Manages the configurations related to the consumer of the resource server.
-- **FintSecurity**: Handles security settings and role types.
-- **SecurityConfiguration**: Central configuration for Spring WebFlux security.
-- **CorePrincipal**: Represents the authenticated user, containing details such as organization ID, scope, username, and roles.
-- **CorePrincipalConverter**: Converts JWT claims into the CorePrincipal object.
+## 1. Configuration Files
 
+### FintSecurity
+- **Purpose**: Manages security-related configurations.
+- **Properties**:
+    - `fint.security.enabled`: Determines if the security is active.
+    - `fint.security.orgid`: Validates if the user's org-id matches the consumer's org-id.
+    - `fint.security.component`: Ensures the user has the appropriate credentials for the component, both in terms of domain and package.
+    - `fint.security.scope`: Checks if the user possesses the correct scope.
 
-### Configuration Setup
-To set up the project, you'll need to configure the following properties:
+### ConsumerConfig
+- **Purpose**: Contains settings related to the consumer, including domain, package name, and organization ID.
+- **Properties**:
+    - `fint.consumer.domain`: Specifies the domain name.
+    - `fint.consumer.package`: Sets the package name.
+    - `fint.consumer.orgId`: Defines the organization ID.
 
-#### In FintSecurity:
-1. **fint.security.enabled**: Enables or disables the security. Default is true.
-2. **fint.security.orgid**: Determines if an organization ID is required. Default is true.
-3. **fint.security.component**: Indicates if a component is required. Default is true.
-4. **fint.security.role-type**: Sets the role type. Default is Client, the only other available value is Adapter
+**Example Configuration**:
+For validating users for a utdanning vurdering consumer in mrfylke.no:
 
-#### In ConsumerConfig:
-1. **fint.consumer.domain**: Specifies the domain of the consumer.
-2. **fint.consumer.package**: Denotes the package name.
-3. **fint.consumer.orgId**: Represents the organization ID.
+```yaml
+fint:
+  consumer:
+    domain: utdanning
+    package: vurdering
+    org-id: mrfylke.no
+```
+
+### OAuthJwtConfig
+- **Purpose**: Manages configurations related to OAuth JWT, including jwt-issuer URI.
+- **Note**: Make sure to include a `jwt-config.properties` file in your classpath, specifically under the `oauth-jwt-settings` directory.
+
+### SecurityConfiguration
+- **Purpose**: Serves as the central configuration for security settings.
+- **Behavior**: Automatically adapts to the configurations set in the above sections.
+
+## 2. Principal and Converter
+
+### CorePrincipal
+- **Description**: Represents a user or system entity.
+- **Attributes**: Includes `orgId`, `username`, `scopes`, and `roles`.
+
+### CorePrincipalConverter
+- **Purpose**: Transforms a `Jwt` token into a `CorePrincipal` object.
+
+## 3. Integration Steps
+
+1. **Include Library**: Add this library to your project's dependency list.
+
+```groovy
+dependencies {
+    implementation 'no.fintlabs:core-resource-server-security:VERSION'
+}
+```
+
+Please replace `VERSION` with the specific version number you intend to use.
