@@ -67,14 +67,14 @@ public class SecurityConfiguration {
                 return new AuthorizationDecision(isComponentValid && isOrgIdValid && isScopeValid);
             }
 
-            log.warn("SecurityConfiguration: Jwt is not a CorePrincipal! Denying Request!");
+            log.warn("Jwt is not a CorePrincipal! Denying Request!");
             return new AuthorizationDecision(false);
         });
     }
 
     private void debugLogIfValidationFails(String validationType, boolean isValid) {
         if (!isValid) {
-            log.debug("SecurityConfiguration: {} validation failed!", validationType);
+            log.debug("{} validation failed!", validationType);
         }
     }
 
