@@ -4,21 +4,12 @@ plugins {
     id 'java'
     id 'groovy'
     id 'maven-publish'
+    id 'java-library'
 }
 
 group = 'no.fintlabs'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
-jar {
-    enabled = false
-}
 
 repositories {
     mavenCentral()
@@ -47,6 +38,27 @@ dependencies {
     testImplementation 'cglib:cglib-nodep:3.3.0'
     testImplementation 'org.spockframework:spock-spring:2.4-M1-groovy-4.0'
     testImplementation 'org.spockframework:spock-core:2.4-M1-groovy-4.0'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+bootJar {
+    enabled = false
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
 
 test {
