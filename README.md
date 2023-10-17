@@ -13,6 +13,7 @@ This library provides a `SecurityConfiguration` designed for Fint projects. Its 
     - `fint.security.orgid`: Validates if the user's org-id matches the consumer's org-id.
     - `fint.security.component`: Ensures the user has the appropriate credentials for the component, both in terms of domain and package.
     - `fint.security.scope`: Checks if the user possesses the correct scope.
+    - `fint.security.role-type`: Can be either Client or Adapter, default value is Client. Determines if the roles and scopes being checked is a client or an adapter.
 
 ### ConsumerConfig
 - **Purpose**: Contains settings related to the consumer, including domain, package name, and organization ID.
