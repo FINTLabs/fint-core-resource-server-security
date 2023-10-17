@@ -60,3 +60,13 @@ dependencies {
 ```
 
 Please replace `VERSION` with the specific version number you intend to use.
+
+## 4. Logging
+
+To diagnose authentication issues, enable debug logging. This will provide detailed information about any validation failures that prevent a user from gaining access.
+
+```yaml
+logging:
+  level:
+    no.fintlabs: debug
+```
