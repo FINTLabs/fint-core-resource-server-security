@@ -9,7 +9,7 @@ This library provides a `SecurityConfiguration` designed for Fint projects. Its 
 ### FintSecurity
 - **Purpose**: Manages security-related configurations.
 - **Properties**:
-    - `fint.security.enabled`: Determines if the security is active.
+    - `fint.security.enabled`: Determines if the user needs a JWT or not. The rest of the configuration does not matter if this is diabled.
     - `fint.security.orgid`: Validates if the user's org-id matches the consumer's org-id.
     - `fint.security.component`: Ensures the user has the appropriate credentials for the component, both in terms of domain and package.
     - `fint.security.scope`: Checks if the user possesses the correct scope.
