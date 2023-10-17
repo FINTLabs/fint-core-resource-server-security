@@ -1,6 +1,5 @@
 package no.fintlabs.core.resource.server.security;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -14,11 +13,7 @@ public class CorePrincipal extends JwtAuthenticationToken {
 
     private final String orgId;
     private final String username;
-
-    @Getter(AccessLevel.NONE)
     private final HashSet<String> scopes;
-
-    @Getter(AccessLevel.NONE)
     private final HashSet<String> roles;
 
     public CorePrincipal(Jwt jwt,
