@@ -14,7 +14,7 @@ public class ConsumerConfig {
     @Value("${fint.consumer.package:}")
     private String packageName;
 
-    @Value("${fint.consumer.orgId:}")
+    @Value("${fint.consumer.org-id:}")
     private String orgId;
 
     public String getComponent() {
