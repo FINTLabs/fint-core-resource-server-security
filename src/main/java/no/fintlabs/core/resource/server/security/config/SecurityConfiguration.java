@@ -89,7 +89,7 @@ public class SecurityConfiguration {
     }
 
     private boolean validateOrgId(CorePrincipal corePrincipal, boolean orgIdRequired) {
-        boolean isValid = !orgIdRequired || corePrincipal.getOrgId().equals(consumerConfig.getOrgId());
+        boolean isValid = !orgIdRequired || corePrincipal.orgIdsMatch(consumerConfig.getOrgId());
         if (!isValid) {
             debugLogIfValidationFails("OrgId", corePrincipal.getOrgId(), consumerConfig.getOrgId());
         }
