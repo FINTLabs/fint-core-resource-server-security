@@ -56,13 +56,8 @@ public class SecurityConfiguration {
                 }
 
                 boolean isComponentValid = validateComponent(corePrincipal, componentRequired);
-                debugLogIfValidationFails("Component", isComponentValid);
-
                 boolean isOrgIdValid = validateOrgId(corePrincipal, orgIdRequired);
-                debugLogIfValidationFails("ORG ID", isOrgIdValid);
-
                 boolean isScopeValid = validateScope(corePrincipal, scopeRequired);
-                debugLogIfValidationFails("Scope", isScopeValid);
 
                 return new AuthorizationDecision(isComponentValid && isOrgIdValid && isScopeValid);
             }
@@ -72,22 +67,33 @@ public class SecurityConfiguration {
         });
     }
 
-    private void debugLogIfValidationFails(String validationType, boolean isValid) {
-        if (!isValid) {
-            log.debug("{} validation failed!", validationType);
-        }
+    private void debugLogIfValidationFails(String validationType, Object compareValue, String configValue) {
+        log.debug("{} Validation Failed! CorePrincipal value: {} compared to Security value: {}",
+                validationType, compareValue.toString(), configValue);
     }
 
     private boolean validateScope(CorePrincipal corePrincipal, boolean scopeRequired) {
-        return !scopeRequired || corePrincipal.hasScope(getScope());
+        boolean isValid = !scopeRequired || corePrincipal.hasScope(getScope());
+        if (!isValid) {
+            debugLogIfValidationFails("Scope", corePrincipal.getScopes(), getScope());
+        }
+        return isValid;
     }
 
     private boolean validateComponent(CorePrincipal corePrincipal, boolean componentRequired) {
-        return !componentRequired || corePrincipal.hasRole(getComponentRole());
+        boolean isValid = !componentRequired || corePrincipal.hasRole(getComponentRole());
+        if (!isValid) {
+            debugLogIfValidationFails("Component", corePrincipal.getRoles(), getComponentRole());
+        }
+        return isValid;
     }
 
     private boolean validateOrgId(CorePrincipal corePrincipal, boolean orgIdRequired) {
-        return !orgIdRequired || corePrincipal.getOrgId().equals(consumerConfig.getOrgId());
+        boolean isValid = !orgIdRequired || corePrincipal.getOrgId().equals(consumerConfig.getOrgId());
+        if (!isValid) {
+            debugLogIfValidationFails("OrgId", corePrincipal.getOrgId(), consumerConfig.getOrgId());
+        }
+        return isValid;
     }
 
     private String getScope() {
