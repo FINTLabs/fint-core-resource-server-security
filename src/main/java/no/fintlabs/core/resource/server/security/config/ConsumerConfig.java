@@ -1,4 +1,4 @@
-package no.fintlabs.resourceServer.security.config;
+package no.fintlabs.core.resource.server.security.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package no.fintlabs.resourceServer.security;
+package no.fintlabs.core.resource.server.security;
 
 import no.vigoiks.resourceserver.security.FintJwtDefaultConverter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

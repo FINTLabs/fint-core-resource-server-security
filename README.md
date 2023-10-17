@@ -1,4 +1,4 @@
-# FINT core resource server
+# FINT core resource server security
 
 ## Project Overview
 This project provides a resource server with a focus on security configurations, tailored for a Spring WebFlux environment. It includes custom JWT-based authentication mechanisms and role-based authorizations.

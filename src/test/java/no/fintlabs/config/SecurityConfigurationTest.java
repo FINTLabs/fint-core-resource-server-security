@@ -1,8 +1,8 @@
 package no.fintlabs.config;
 
-import no.fintlabs.resourceServer.security.config.ConsumerConfig;
-import no.fintlabs.resourceServer.security.config.FintSecurity;
-import no.fintlabs.resourceServer.security.config.SecurityConfiguration;
+import no.fintlabs.core.resource.server.security.config.ConsumerConfig;
+import no.fintlabs.core.resource.server.security.config.FintSecurity;
+import no.fintlabs.core.resource.server.security.config.SecurityConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package no.fintlabs.resourceServer.security;
+package no.fintlabs.core.resource.server.security;
 
 import lombok.AccessLevel;
 import lombok.Getter;
