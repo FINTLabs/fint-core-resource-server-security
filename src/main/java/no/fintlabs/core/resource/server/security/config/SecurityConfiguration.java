@@ -67,15 +67,15 @@ public class SecurityConfiguration {
         });
     }
 
-    private void debugLogIfValidationFails(String validationType, Object compareValue, String configValue) {
-        log.warn("{} Validation Failed! CorePrincipal value: {} compared to Security value: {}",
-                validationType, compareValue.toString(), configValue);
+    private void debugLogIfValidationFails(String username, String validationType, Object compareValue, String configValue) {
+        log.warn("{}: {} Validation Failed! CorePrincipal value: {} compared to Security value: {}",
+                username, validationType, compareValue.toString(), configValue);
     }
 
     private boolean validateScope(CorePrincipal corePrincipal, boolean scopeRequired) {
         boolean isValid = !scopeRequired || corePrincipal.hasScope(getScope());
         if (!isValid) {
-            debugLogIfValidationFails("Scope", corePrincipal.getScopes(), getScope());
+            debugLogIfValidationFails(corePrincipal.getUsername(),"Scope", corePrincipal.getScopes(), getScope());
         }
         return isValid;
     }
@@ -83,7 +83,7 @@ public class SecurityConfiguration {
     private boolean validateComponent(CorePrincipal corePrincipal, boolean componentRequired) {
         boolean isValid = !componentRequired || corePrincipal.hasRole(getComponentRole());
         if (!isValid) {
-            debugLogIfValidationFails("Component", corePrincipal.getRoles(), getComponentRole());
+            debugLogIfValidationFails(corePrincipal.getUsername(),"Component", corePrincipal.getRoles(), getComponentRole());
         }
         return isValid;
     }
@@ -91,7 +91,7 @@ public class SecurityConfiguration {
     private boolean validateOrgId(CorePrincipal corePrincipal, boolean orgIdRequired) {
         boolean isValid = !orgIdRequired || corePrincipal.orgIdsMatch(consumerConfig.getOrgId());
         if (!isValid) {
-            debugLogIfValidationFails("OrgId", corePrincipal.getOrgId(), consumerConfig.getOrgId());
+            debugLogIfValidationFails(corePrincipal.getUsername(),"OrgId", corePrincipal.getOrgId(), consumerConfig.getOrgId());
         }
         return isValid;
     }
