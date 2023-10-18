@@ -68,7 +68,7 @@ public class SecurityConfiguration {
     }
 
     private void debugLogIfValidationFails(String validationType, Object compareValue, String configValue) {
-        log.debug("{} Validation Failed! CorePrincipal value: {} compared to Security value: {}",
+        log.warn("{} Validation Failed! CorePrincipal value: {} compared to Security value: {}",
                 validationType, compareValue.toString(), configValue);
     }
 
