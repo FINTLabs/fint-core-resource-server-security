@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 public class SecurityConfiguration {
 
     private final FintSecurity fintSecurity;
-    private final ConsumerConfig consumerConfig;
+    private final FintConsumerConfig consumerConfig;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {

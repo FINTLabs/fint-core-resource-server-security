@@ -1,6 +1,6 @@
 package no.fintlabs.config;
 
-import no.fintlabs.core.resource.server.security.config.ConsumerConfig;
+import no.fintlabs.core.resource.server.security.config.FintConsumerConfig;
 import no.fintlabs.core.resource.server.security.config.FintSecurity;
 import no.fintlabs.core.resource.server.security.config.SecurityConfiguration;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ class SecurityConfigurationTest {
     private FintSecurity fintSecurity;
 
     @Mock
-    private ConsumerConfig consumerConfig;
+    private FintConsumerConfig consumerConfig;
 
     @Mock
     private ServerHttpSecurity http;

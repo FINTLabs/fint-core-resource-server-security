@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-public class ConsumerConfig {
+public class FintConsumerConfig {
 
     @Value("${fint.consumer.domain:}")
     private String domain;
