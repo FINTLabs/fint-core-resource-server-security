@@ -40,4 +40,8 @@ public class CorePrincipal extends JwtAuthenticationToken {
         return this.orgId.equals(orgId);
     }
 
+    public boolean orgIdDoesntMatch(String orgId) {
+        return !this.orgId.equals(orgId);
+    }
+
 }
