@@ -60,4 +60,15 @@ public class CorePrincipal extends JwtAuthenticationToken {
         return !this.orgId.equals(orgId);
     }
 
+    @Override
+    public String toString() {
+        return "CorePrincipal{" +
+                "orgId='" + orgId + '\'' +
+                ", username='" + username + '\'' +
+                ", scopes=" + scopes +
+                ", roles=" + roles +
+                ", " + super.toString() +
+                '}';
+    }
+
 }
