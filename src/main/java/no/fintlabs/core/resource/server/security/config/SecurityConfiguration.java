@@ -35,10 +35,15 @@ public class SecurityConfiguration {
                                 jwtSpec -> jwtSpec.jwtAuthenticationConverter(new CorePrincipalConverter())
                         )
                 )
-                .authorizeExchange(authorizeExchangeSpec ->
-                        authorizeExchangeSpec
-                                .anyExchange()
-                                .access(this::checkCorePrincipalForAccess));
+                .authorizeExchange(authorizeExchangeSpec -> {
+                    for (String path : fintSecurity.getOpenPaths()) {
+                        authorizeExchangeSpec.pathMatchers(path).permitAll();
+                    }
+
+                    authorizeExchangeSpec
+                            .anyExchange()
+                            .access(this::checkCorePrincipalForAccess);
+                });
 
         return http.build();
     }
@@ -75,7 +80,7 @@ public class SecurityConfiguration {
     private boolean validateScope(CorePrincipal corePrincipal, boolean scopeRequired) {
         boolean isValid = !scopeRequired || corePrincipal.hasScope(getScope());
         if (!isValid) {
-            debugLogIfValidationFails(corePrincipal.getUsername(),"Scope", corePrincipal.getScopes(), getScope());
+            debugLogIfValidationFails(corePrincipal.getUsername(), "Scope", corePrincipal.getScopes(), getScope());
         }
         return isValid;
     }
@@ -83,7 +88,7 @@ public class SecurityConfiguration {
     private boolean validateComponent(CorePrincipal corePrincipal, boolean componentRequired) {
         boolean isValid = !componentRequired || corePrincipal.hasRole(getComponentRole());
         if (!isValid) {
-            debugLogIfValidationFails(corePrincipal.getUsername(),"Component", corePrincipal.getRoles(), getComponentRole());
+            debugLogIfValidationFails(corePrincipal.getUsername(), "Component", corePrincipal.getRoles(), getComponentRole());
         }
         return isValid;
     }
@@ -91,7 +96,7 @@ public class SecurityConfiguration {
     private boolean validateOrgId(CorePrincipal corePrincipal, boolean orgIdRequired) {
         boolean isValid = !orgIdRequired || corePrincipal.hasMatchingOrgId(consumerConfig.getOrgId());
         if (!isValid) {
-            debugLogIfValidationFails(corePrincipal.getUsername(),"OrgId", corePrincipal.getOrgId(), consumerConfig.getOrgId());
+            debugLogIfValidationFails(corePrincipal.getUsername(), "OrgId", corePrincipal.getOrgId(), consumerConfig.getOrgId());
         }
         return isValid;
     }
