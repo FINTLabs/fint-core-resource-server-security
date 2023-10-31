@@ -9,7 +9,7 @@ plugins {
 
 group = 'no.fintlabs'
 version = System.getenv("RELEASE_VERSION") ?: '0.0.1-SNAPSHOT'
-sourceCompatibility = '21'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
