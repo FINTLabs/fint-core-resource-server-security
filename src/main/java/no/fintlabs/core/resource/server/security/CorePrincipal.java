@@ -1,6 +1,7 @@
 package no.fintlabs.core.resource.server.security;
 
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Getter
+@ToString
 public class CorePrincipal extends JwtAuthenticationToken {
 
     private final String orgId;
@@ -58,17 +60,6 @@ public class CorePrincipal extends JwtAuthenticationToken {
 
     public boolean doesNotHaveMatchingOrgId(String orgId) {
         return !this.orgId.equals(orgId);
-    }
-
-    @Override
-    public String toString() {
-        return "CorePrincipal{" +
-                "orgId='" + orgId + '\'' +
-                ", username='" + username + '\'' +
-                ", scopes=" + scopes +
-                ", roles=" + roles +
-                ", " + super.toString() +
-                '}';
     }
 
 }
