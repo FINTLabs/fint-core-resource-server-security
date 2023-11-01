@@ -1,4 +1,4 @@
-package no.fintlabs.core.resource.server.security;
+package no.fintlabs.core.resource.server.security.authentication;
 
 import lombok.Getter;
 import lombok.ToString;
