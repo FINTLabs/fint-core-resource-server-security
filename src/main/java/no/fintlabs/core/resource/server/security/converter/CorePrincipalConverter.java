@@ -8,12 +8,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
 
-public class CorePrincipalConverter extends FintJwtDefaultConverter {
+import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.*;
 
-    private final static String FINT_ASSET_IDS = "fintAssetIDs";
-    private final static String ROLES = "Roles";
-    private final static String SCOPE = "scope";
-    private final static String USERNAME = "cn";
+public class CorePrincipalConverter extends FintJwtDefaultConverter {
 
     public CorePrincipalConverter() {
         this.addMapping(FINT_ASSET_IDS, "ORGID_");
