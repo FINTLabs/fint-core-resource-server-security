@@ -6,9 +6,8 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.oauth2.jwt.Jwt;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
-
-import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.*;
+import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.FINT_ASSET_IDS;
+import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.ROLES;
 
 public class CorePrincipalConverter extends FintJwtDefaultConverter {
 
@@ -19,14 +18,7 @@ public class CorePrincipalConverter extends FintJwtDefaultConverter {
 
     @Override
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
-        return super.convert(jwt).map(token -> new CorePrincipal(
-                jwt,
-                token.getAuthorities(),
-                jwt.getClaimAsString(FINT_ASSET_IDS),
-                jwt.getClaimAsString(USERNAME),
-                new HashSet<>(jwt.getClaimAsStringList(SCOPE)),
-                new HashSet<>(jwt.getClaimAsStringList(ROLES))
-        ));
+        return super.convert(jwt).map(token -> new CorePrincipal(jwt, token.getAuthorities()));
     }
 
 }

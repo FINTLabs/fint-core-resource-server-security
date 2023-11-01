@@ -9,6 +9,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import java.util.Collection;
 import java.util.HashSet;
 
+import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.*;
+
 @Getter
 @ToString
 public class CorePrincipal extends JwtAuthenticationToken {
@@ -18,16 +20,12 @@ public class CorePrincipal extends JwtAuthenticationToken {
     private final HashSet<String> scopes;
     private final HashSet<String> roles;
 
-    public CorePrincipal(Jwt jwt,
-                         Collection<? extends GrantedAuthority> authorities,
-                         String orgId, String username,
-                         HashSet<String> scopes,
-                         HashSet<String> roles) {
+    public CorePrincipal(Jwt jwt, Collection<? extends GrantedAuthority> authorities) {
         super(jwt, authorities);
-        this.orgId = orgId;
-        this.scopes = scopes;
-        this.username = username;
-        this.roles = roles;
+        this.orgId = jwt.getClaimAsString(FINT_ASSET_IDS);
+        this.username = jwt.getClaimAsString(USERNAME);
+        this.scopes = new HashSet<>(jwt.getClaimAsStringList(SCOPE));
+        this.roles = new HashSet<>(jwt.getClaimAsStringList(ROLES));
     }
 
     public boolean hasMatchingUsername(String username) {
