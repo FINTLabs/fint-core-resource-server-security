@@ -1,5 +1,7 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 plugins {
-    id 'org.springframework.boot' version '3.1.5'
+    id 'org.springframework.boot' version '3.1.5' apply false
     id 'io.spring.dependency-management' version '1.1.3'
     id 'java'
     id 'groovy'
@@ -22,10 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-    implementation 'no.fintlabs:fint-resource-server-security:1.1.1-rc-2'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.1.5'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
     compileOnly 'org.projectlombok:lombok'
@@ -46,10 +45,6 @@ configurations {
     }
 }
 
-bootJar {
-    enabled = false
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -58,6 +53,12 @@ publishing {
     }
     repositories {
         mavenLocal()
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom SpringBootPlugin.BOM_COORDINATES
     }
 }
 
