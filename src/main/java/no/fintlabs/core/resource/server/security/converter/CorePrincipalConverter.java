@@ -1,4 +1,4 @@
-package no.fintlabs.core.resource.server.security;
+package no.fintlabs.core.resource.server.security.converter;
 
 import no.fintlabs.core.resource.server.security.authentication.CorePrincipal;
 import no.vigoiks.resourceserver.security.FintJwtDefaultConverter;
