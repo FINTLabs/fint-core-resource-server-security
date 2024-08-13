@@ -6,8 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.*;
 
@@ -15,14 +17,14 @@ import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.*;
 @ToString
 public class CorePrincipal extends JwtAuthenticationToken {
 
-    private final String orgId;
+    private final Set<String> assets;
     private final String username;
     private final HashSet<String> scopes;
     private final HashSet<String> roles;
 
     public CorePrincipal(Jwt jwt, Collection<? extends GrantedAuthority> authorities) {
         super(jwt, authorities);
-        this.orgId = jwt.getClaimAsString(FINT_ASSET_IDS);
+        this.assets = new HashSet<>(Arrays.asList(jwt.getClaimAsString(FINT_ASSET_IDS).split(",")));
         this.username = jwt.getClaimAsString(USERNAME);
         this.scopes = new HashSet<>(jwt.getClaimAsStringList(SCOPE));
         this.roles = new HashSet<>(jwt.getClaimAsStringList(ROLES));
@@ -52,12 +54,22 @@ public class CorePrincipal extends JwtAuthenticationToken {
         return !roles.contains(role);
     }
 
+    @Deprecated
     public boolean hasMatchingOrgId(String orgId) {
-        return this.orgId.equals(orgId);
+        return assets.contains(orgId);
     }
 
+    public boolean containsAsset(String asset) {
+        return assets.contains(asset);
+    }
+
+    public boolean doesNotContainAsset(String asset) {
+        return !assets.contains(asset);
+    }
+
+    @Deprecated
     public boolean doesNotHaveMatchingOrgId(String orgId) {
-        return !this.orgId.equals(orgId);
+        return !this.assets.contains(orgId);
     }
 
 }
