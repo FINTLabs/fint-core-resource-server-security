@@ -48,11 +48,14 @@ class SecurityConfiguration(
     ): Mono<AuthorizationDecision> =
         auth.flatMap { authentication ->
             if (securityProperties.jwtType != JwtType.CORE) mono { AuthorizationDecision(true) }
-             else {
-                val principal = authentication.principal
+            else {
+                val principal = authentication
                 when (principal) {
                     is CorePrincipal -> coreAccessService.authorizeCore(principal, ctx.exchange)
-                        .map { AuthorizationDecision(it) }
+                        .map {
+                            logger.debug("Opa response: $it")
+                            AuthorizationDecision(it)
+                        }
 
                     else -> {
                         logger.debug("Principal is not CorePrincipal, type: ${principal?.javaClass?.simpleName}, denying access")
