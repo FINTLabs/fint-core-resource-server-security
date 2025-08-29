@@ -1,0 +1,35 @@
+name: CD
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish_lib:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Extract version (no “v” prefix)
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+
+      - name: Build & publish to Reposilite
+        uses: gradle/gradle-build-action@v2.4.2
+        with:
+          arguments: |
+            clean
+            build
+            publish
+            -Pversion=${{ env.VERSION }}
+        env:
+          REPOSILITE_USERNAME: ${{ secrets.REPOSILITE_USERNAME }}
+          REPOSILITE_PASSWORD: ${{ secrets.REPOSILITE_PASSWORD }}
