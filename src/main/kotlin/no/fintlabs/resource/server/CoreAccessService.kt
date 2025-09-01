@@ -20,44 +20,47 @@ class CoreAccessService(
 
     fun authorizeCore(principal: CorePrincipal, exchange: ServerWebExchange): Mono<Boolean> =
         when {
-            !typeMatches(principal) -> {
-                logger.debug(
-                    "Authorization failed: typeMatches=false, requiredType={}, principal={}",
-                    securityProperties.fintType, principal
-                )
-                Mono.just(false)
-            }
-
-            !scopeMatches(principal) -> {
-                logger.debug(
-                    "Authorization failed: scopeMatches=false, requiredScopes={}, principalScopes={}",
-                    securityProperties.requiredScopes, principal.scopes
-                )
-                Mono.just(false)
-            }
-
-            !roleMatches(principal, exchange) -> {
-                logger.debug(
-                    "Authorization failed: roleMatches=false for path={}, principalRoles={}",
-                    exchange.request.uri.path, principal.roles
-                )
-                Mono.just(false)
-            }
-
-            else -> opaCheck(principal, exchange)
+            !matchesType(principal) -> denyType(principal)
+            !matchesScope(principal) -> denyScope(principal)
+            !matchesRole(principal, exchange) -> denyRole(principal, exchange)
+            else -> checkOpa(principal, exchange)
         }
 
-    private fun typeMatches(p: CorePrincipal): Boolean =
+    private fun denyType(p: CorePrincipal): Mono<Boolean> {
+        logger.debug(
+            "Authorization failed: typeMatches=false, requiredType={}, principal={}",
+            securityProperties.fintType, p
+        )
+        return Mono.just(false)
+    }
+
+    private fun denyScope(p: CorePrincipal): Mono<Boolean> {
+        logger.debug(
+            "Authorization failed: scopeMatches=false, requiredScopes={}, principalScopes={}",
+            securityProperties.requiredScopes, p.scopes
+        )
+        return Mono.just(false)
+    }
+
+    private fun denyRole(p: CorePrincipal, ex: ServerWebExchange): Mono<Boolean> {
+        logger.debug(
+            "Authorization failed: roleMatches=false for path={}, principalRoles={}",
+            ex.request.uri.path, p.roles
+        )
+        return Mono.just(false)
+    }
+
+    private fun matchesType(p: CorePrincipal): Boolean =
         securityProperties.fintType
             ?.let { if (it == FintType.CLIENT) p.isClient() else p.isAdapter() }
             ?: true
 
-    private fun scopeMatches(p: CorePrincipal): Boolean =
+    private fun matchesScope(p: CorePrincipal): Boolean =
         securityProperties.requiredScopes
             ?.any { p.scopes.contains(it.formattedValue) }
             ?: true
 
-    private fun roleMatches(p: CorePrincipal, ex: ServerWebExchange): Boolean {
+    private fun matchesRole(p: CorePrincipal, ex: ServerWebExchange): Boolean {
         val segments = ex.request.uri.path
             .split('/')
             .filter(String::isNotBlank)
@@ -66,8 +69,8 @@ class CoreAccessService(
         return p.hasRole(domain, pkg)
     }
 
-    private fun opaCheck(p: CorePrincipal, ex: ServerWebExchange): Mono<Boolean> =
-        opaService.requestOpa(p.token, ex.request)
+    private fun checkOpa(principal: CorePrincipal, ex: ServerWebExchange): Mono<Boolean> =
+        opaService.requestOpa(principal.token, ex.request)
             .map { opa ->
                 ex.attributes["x-opa-fields"] = opa.result.fields
                 ex.attributes["x-opa-relations"] = opa.result.relations
