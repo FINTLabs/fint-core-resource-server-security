@@ -6,10 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static no.fintlabs.core.resource.server.security.JwtClaimsConstants.*;
 
@@ -24,10 +21,30 @@ public class CorePrincipal extends JwtAuthenticationToken {
 
     public CorePrincipal(Jwt jwt, Collection<? extends GrantedAuthority> authorities) {
         super(jwt, authorities);
-        this.assets = new HashSet<>(Arrays.asList(jwt.getClaimAsString(FINT_ASSET_IDS).split(",")));
         this.username = jwt.getClaimAsString(USERNAME);
-        this.scopes = new HashSet<>(jwt.getClaimAsStringList(SCOPE));
-        this.roles = new HashSet<>(jwt.getClaimAsStringList(ROLES));
+        this.assets = extractAssets(jwt);
+        this.scopes = extractClaimAsSet(jwt, SCOPE);
+        this.roles = extractClaimAsSet(jwt, ROLES);
+    }
+
+    private Set<String> extractAssets(Jwt jwt) {
+        String assetClaim = jwt.getClaimAsString(FINT_ASSET_IDS);
+
+        if (assetClaim == null || assetClaim.isBlank()) {
+            return new HashSet<>();
+        }
+
+        return new HashSet<>(Arrays.asList(assetClaim.split(",")));
+    }
+
+    private HashSet<String> extractClaimAsSet(Jwt jwt, String claimName) {
+        List<String> claimList = jwt.getClaimAsStringList(claimName);
+
+        if (claimList == null) {
+            return new HashSet<>();
+        }
+
+        return new HashSet<>(claimList);
     }
 
     public boolean hasMatchingUsername(String username) {
