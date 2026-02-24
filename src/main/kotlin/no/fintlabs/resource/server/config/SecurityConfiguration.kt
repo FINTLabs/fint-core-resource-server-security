@@ -32,6 +32,7 @@ class SecurityConfiguration(
 
     private fun authorizeRequest(http: ServerHttpSecurity): SecurityWebFilterChain =
         http
+            .csrf { it.disable() }
             .oauth2ResourceServer { it.jwt(::configureJwtConverter) }
             .authorizeExchange(::configureExchanges)
             .build()
@@ -74,6 +75,8 @@ class SecurityConfiguration(
     }
 
     private fun permitAll(http: ServerHttpSecurity): SecurityWebFilterChain =
-        http.authorizeExchange { it.anyExchange().permitAll() }
+        http
+            .csrf { it.disable() }
+            .authorizeExchange { it.anyExchange().permitAll() }
             .build()
 }
