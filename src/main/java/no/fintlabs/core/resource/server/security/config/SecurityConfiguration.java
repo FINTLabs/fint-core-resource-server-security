@@ -30,6 +30,7 @@ public class SecurityConfiguration {
 
     private SecurityWebFilterChain requireJwt(ServerHttpSecurity http) {
         http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .oauth2ResourceServer(oauth2ResourceServerSpec ->
                         oauth2ResourceServerSpec.jwt(
                                 jwtSpec -> jwtSpec.jwtAuthenticationConverter(new CorePrincipalConverter())
@@ -114,7 +115,11 @@ public class SecurityConfiguration {
     }
 
     private ServerHttpSecurity permitAllExchanges(ServerHttpSecurity http) {
-        return http.authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec.anyExchange().permitAll());
+        return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(
+                        authorizeExchangeSpec -> authorizeExchangeSpec.anyExchange().permitAll()
+                );
     }
 
 }
