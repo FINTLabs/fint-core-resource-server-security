@@ -1,1 +1,1 @@
-rootProject.name = "core-resource-server"
+rootProject.name = "fint-core-principal"

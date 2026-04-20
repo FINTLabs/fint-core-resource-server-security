@@ -1,6 +1,6 @@
-package no.fintlabs.resource.server.converter
+package no.novari.resource.server.converter
 
-import no.fintlabs.resource.server.authentication.CorePrincipal
+import no.novari.resource.server.authentication.CorePrincipal
 import org.springframework.core.convert.converter.Converter
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.oauth2.jwt.Jwt
