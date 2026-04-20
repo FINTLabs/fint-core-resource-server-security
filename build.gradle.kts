@@ -1,3 +1,5 @@
+import org.gradle.authentication.http.BasicAuthentication
+
 plugins {
 	kotlin("jvm") version "2.3.0"
 	kotlin("plugin.spring") version "2.3.0"
@@ -14,6 +16,7 @@ java {
 	toolchain {
 		languageVersion.set(JavaLanguageVersion.of(21))
 	}
+	withSourcesJar()
 }
 
 repositories {
@@ -34,16 +37,24 @@ kotlin {
 
 tasks.test { useJUnitPlatform() }
 tasks.bootJar { enabled = false }
-
-val sourcesJar by tasks.registering(Jar::class) {
-	archiveClassifier.set("sources")
-	from(sourceSets["main"].allSource)
-}
-
-apply(from = "https://raw.githubusercontent.com/FINTLabs/fint-buildscripts/master/reposilite.ga.gradle")
+tasks.jar { archiveClassifier.set("") }
 
 publishing {
-	publications.named<MavenPublication>("maven") {
-		artifact(sourcesJar.get())
+	repositories {
+		maven {
+			url = uri("https://repo.fintlabs.no/releases")
+			credentials {
+				username = System.getenv("REPOSILITE_USERNAME")
+				password = System.getenv("REPOSILITE_PASSWORD")
+			}
+			authentication {
+				create<BasicAuthentication>("basic")
+			}
+		}
+	}
+	publications {
+		create<MavenPublication>("maven") {
+			from(components["java"])
+		}
 	}
 }
