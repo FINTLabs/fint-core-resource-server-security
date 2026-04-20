@@ -1,9 +1,4 @@
-import org.gradle.api.Project
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.testing.Test
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.*
+import org.gradle.authentication.http.BasicAuthentication
 
 plugins {
 	kotlin("jvm") version "2.3.0"
@@ -21,6 +16,7 @@ java {
 	toolchain {
 		languageVersion.set(JavaLanguageVersion.of(21))
 	}
+	withSourcesJar()
 }
 
 repositories {
@@ -39,56 +35,26 @@ kotlin {
 	compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") }
 }
 
-tasks.withType<Test> { useJUnitPlatform() }
-tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> { enabled = false }
-
-val sourcesJar by tasks.registering(Jar::class) {
-	archiveClassifier.set("sources")
-	from(sourceSets["main"].allSource)
-}
-
-apply(from = "https://raw.githubusercontent.com/FINTLabs/fint-buildscripts/master/reposilite.ga.gradle")
+tasks.test { useJUnitPlatform() }
+tasks.bootJar { enabled = false }
+tasks.jar { archiveClassifier.set("") }
 
 publishing {
-	publications.named<MavenPublication>("maven") {
-		artifact(sourcesJar.get())
+	repositories {
+		maven {
+			url = uri("https://repo.fintlabs.no/releases")
+			credentials {
+				username = System.getenv("REPOSILITE_USERNAME")
+				password = System.getenv("REPOSILITE_PASSWORD")
+			}
+			authentication {
+				create<BasicAuthentication>("basic")
+			}
+		}
+	}
+	publications {
+		create<MavenPublication>("maven") {
+			from(components["java"])
+		}
 	}
 }
-
-fun Project.configureTestSets() = sourceSets {
-	val unit by creating {
-		kotlin.srcDir("src/test/unit/kotlin")
-		resources.srcDir("src/test/unit/resources")
-		compileClasspath += main.get().output + configurations["testRuntimeClasspath"]
-		runtimeClasspath += output + compileClasspath
-	}
-	val integration by creating {
-		kotlin.srcDir("src/test/integration/kotlin")
-		resources.srcDir("src/test/integration/resources")
-		compileClasspath += main.get().output + configurations["testRuntimeClasspath"]
-		runtimeClasspath += output + compileClasspath
-	}
-}
-
-fun Project.configureTestConfigs() = listOf("unit", "integration")
-	.forEach {
-		configurations["${it}Implementation"].extendsFrom(configurations["testImplementation"])
-		configurations["${it}RuntimeOnly"].extendsFrom(configurations["testRuntimeOnly"])
-	}
-
-fun Project.configureTestTasks() {
-	tasks.register<Test>("unitTest") {
-		testClassesDirs = sourceSets["unit"].output.classesDirs
-		classpath = sourceSets["unit"].runtimeClasspath
-	}
-	tasks.register<Test>("integrationTest") {
-		shouldRunAfter("unitTest")
-		testClassesDirs = sourceSets["integration"].output.classesDirs
-		classpath = sourceSets["integration"].runtimeClasspath
-	}
-	tasks.named("check") { dependsOn("unitTest", "integrationTest") }
-}
-
-configureTestSets()
-configureTestConfigs()
-configureTestTasks()
