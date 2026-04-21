@@ -17,6 +17,29 @@ A small Spring Boot library that turns a FINT Core JWT into a strongly-typed Kot
 
 This library deliberately does **not** configure security. No `SecurityWebFilterChain`, no `JwtDecoder`, no authorization rules, no OPA integration. Each service owns its own security configuration and wires `CorePrincipalConverter` in itself.
 
+## Where did `SecurityConfiguration` / OPA / `CoreAccessService` go?
+
+Earlier versions of this library (published as `no.fintlabs:core-resource-server`) shipped an opinionated `SecurityConfiguration` that:
+
+- built a `SecurityWebFilterChain` for you,
+- required every request to be authenticated,
+- called out to Open Policy Agent (OPA) via `CoreAccessService` / `OpaService` / `OpaClient` to authorize requests,
+- and pulled in `spring-boot-starter-webflux`, `reactor-netty`, `jackson-module-kotlin`, and friends as transitive dependencies.
+
+All of that was removed in the 4.x rewrite. The library is now just `CorePrincipal` + `CorePrincipalConverter` + an overridable issuer-URI default.
+
+**Why it was removed:**
+
+- **Security config is service-specific.** The one-size-fits-all filter chain forced every service to opt out piecemeal whenever it needed a different rule (public endpoints, actuator exposure, custom matchers). Owning the `SecurityFilterChain` in each service is clearer than fighting an opinionated default.
+- **OPA is a policy choice, not a library concern.** Not every service authorizes via OPA, and the ones that do want to control the client, caching, request shape, and failure behavior themselves. Bundling an OPA client here coupled unrelated services to the same OPA version, URL convention, and envelope format.
+- **Transitive weight.** Shipping WebFlux + Reactor + Jackson-Kotlin as `api` dependencies leaked those choices into every consumer, including services on Spring MVC. The current library has a single `api` dependency: `spring-boot-starter-oauth2-resource-server`.
+- **Spring Boot 3/4 compatibility.** The old auto-configured chain was tied to APIs that shifted between Boot 3 and Boot 4. Keeping the library to plain types (`Converter<Jwt, AbstractAuthenticationToken>`, `EnvironmentPostProcessor`) means one artifact works on both.
+
+**What to do instead:**
+
+- Build your own `SecurityFilterChain` (or `SecurityWebFilterChain`) in the service and wire in `CorePrincipalConverter` — see the usage example below.
+- If you need OPA, call it from your own `AuthorizationManager` / interceptor / filter in the service. There is no replacement helper in this library.
+
 ## Usage
 
 Add the dependency:
