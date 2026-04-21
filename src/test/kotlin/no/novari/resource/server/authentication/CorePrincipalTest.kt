@@ -3,6 +3,7 @@ package no.novari.resource.server.authentication
 import io.mockk.every
 import io.mockk.mockk
 import no.novari.resource.server.JwtClaimsConstants.FINT_ASSET_IDS
+import no.novari.resource.server.JwtClaimsConstants.ROLES
 import no.novari.resource.server.JwtClaimsConstants.SCOPE
 import no.novari.resource.server.JwtClaimsConstants.USERNAME
 import no.novari.resource.server.enums.FintScope
@@ -19,11 +20,13 @@ internal class CorePrincipalTest {
     private fun jwt(
         assetIds: String? = "fintlabs-no",
         username: String = "user@client.fintlabs.no",
-        scopes: List<String>? = listOf("fint-client")
+        scopes: List<String>? = listOf("fint-client"),
+        roles: List<String>? = null
     ) = mockk<Jwt>(relaxed = true).apply {
         every { getClaimAsString(FINT_ASSET_IDS) } returns assetIds
         every { getClaimAsString(USERNAME) } returns username
         every { getClaimAsStringList(SCOPE) } returns scopes
+        every { getClaimAsStringList(ROLES) } returns roles
     }
 
     @Nested
@@ -81,6 +84,75 @@ internal class CorePrincipalTest {
         fun `is empty when claim is absent`() {
             val principal = CorePrincipal(jwt(scopes = null), emptyList())
             assertThat(principal.scopes).isEmpty()
+        }
+    }
+
+    @Nested
+    @DisplayName("components")
+    inner class Components {
+        @Test
+        fun `strips FINT_Client_ prefix and keeps snake_case entries`() {
+            val principal = CorePrincipal(
+                jwt(roles = listOf("FINT_Client_utdanning_elev", "FINT_Client_administrasjon_fullmakt")),
+                emptyList()
+            )
+            assertThat(principal.components)
+                .containsExactlyInAnyOrder("utdanning_elev", "administrasjon_fullmakt")
+        }
+
+        @Test
+        fun `strips FINT_Adapter_ prefix and keeps snake_case entries`() {
+            val principal = CorePrincipal(
+                jwt(roles = listOf("FINT_Adapter_utdanning_elev")),
+                emptyList()
+            )
+            assertThat(principal.components).containsExactly("utdanning_elev")
+        }
+
+        @Test
+        fun `drops CamelCase duplicates`() {
+            val principal = CorePrincipal(
+                jwt(roles = listOf("FINT_Client_utdanning_elev", "FINT_Client_UtdanningElev")),
+                emptyList()
+            )
+            assertThat(principal.components).containsExactly("utdanning_elev")
+        }
+
+        @Test
+        fun `drops entries without exactly one underscore after stripping`() {
+            val principal = CorePrincipal(
+                jwt(roles = listOf("FINT_Client_vigokodeverk", "authenticated", "FINT_Client_a_b_c")),
+                emptyList()
+            )
+            assertThat(principal.components).isEmpty()
+        }
+
+        @Test
+        fun `is empty when Roles claim is absent`() {
+            val principal = CorePrincipal(jwt(roles = null), emptyList())
+            assertThat(principal.components).isEmpty()
+        }
+    }
+
+    @Nested
+    @DisplayName("hasComponent")
+    inner class HasComponent {
+        @Test
+        fun `returns true when domain and package match a component`() {
+            val principal = CorePrincipal(
+                jwt(roles = listOf("FINT_Client_utdanning_elev")),
+                emptyList()
+            )
+            assertThat(principal.hasComponent("utdanning", "elev")).isTrue()
+        }
+
+        @Test
+        fun `returns false when domain and package do not match any component`() {
+            val principal = CorePrincipal(
+                jwt(roles = listOf("FINT_Client_utdanning_elev")),
+                emptyList()
+            )
+            assertThat(principal.hasComponent("administrasjon", "fullmakt")).isFalse()
         }
     }
 }

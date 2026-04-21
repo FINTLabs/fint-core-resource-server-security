@@ -1,6 +1,7 @@
 package no.novari.resource.server.authentication
 
 import no.novari.resource.server.JwtClaimsConstants.FINT_ASSET_IDS
+import no.novari.resource.server.JwtClaimsConstants.ROLES
 import no.novari.resource.server.JwtClaimsConstants.SCOPE
 import no.novari.resource.server.JwtClaimsConstants.USERNAME
 import no.novari.resource.server.enums.FintScope
@@ -31,4 +32,13 @@ class CorePrincipal(
         ?.mapNotNull(FintScope::fromClaim)
         ?.toSet()
         .orEmpty()
+
+    val components: Set<String> = jwt.getClaimAsStringList(ROLES)
+        ?.map { it.removePrefix("FINT_Client_").removePrefix("FINT_Adapter_") }
+        ?.filter { it.none(Char::isUpperCase) && it.count { c -> c == '_' } == 1 }
+        ?.toSet()
+        .orEmpty()
+
+    fun hasComponent(domain: String, pkg: String): Boolean =
+        "${domain}_${pkg}" in components
 }
