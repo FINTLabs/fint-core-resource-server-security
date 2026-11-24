@@ -1,8 +1,8 @@
 import org.gradle.authentication.http.BasicAuthentication
 
 plugins {
-	kotlin("jvm") version "2.3.0"
-	kotlin("plugin.spring") version "2.3.0"
+	kotlin("jvm") version "2.4.21"
+	kotlin("plugin.spring") version "2.4.21"
 	id("org.springframework.boot") version "3.5.5"
 	id("io.spring.dependency-management") version "1.1.7"
 	`java-library`
@@ -27,7 +27,7 @@ repositories {
 dependencies {
 	api("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.mockk:mockk:1.14.3")
+	testImplementation("io.mockk:mockk:1.14.12")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
