@@ -3,7 +3,7 @@ import org.gradle.authentication.http.BasicAuthentication
 plugins {
 	kotlin("jvm") version "2.3.0"
 	kotlin("plugin.spring") version "2.3.0"
-	id("org.springframework.boot") version "3.5.5"
+	id("org.springframework.boot") version "4.2.0"
 	id("io.spring.dependency-management") version "1.1.7"
 	`java-library`
 	`maven-publish`
