@@ -13,6 +13,6 @@ class CorePrincipalConverter : Converter<Jwt, AbstractAuthenticationToken> {
     override fun convert(jwt: Jwt): AbstractAuthenticationToken =
         CorePrincipal(
             jwt,
-            defaultGrantedAuthoritiesConverter.convert(jwt) ?: emptyList()
+            defaultGrantedAuthoritiesConverter.convert(jwt)
         )
 }
