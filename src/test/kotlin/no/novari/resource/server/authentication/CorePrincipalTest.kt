@@ -9,6 +9,7 @@ import no.novari.resource.server.JwtClaimsConstants.USERNAME
 import no.novari.resource.server.enums.FintScope
 import no.novari.resource.server.enums.FintType
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -19,7 +20,7 @@ internal class CorePrincipalTest {
 
     private fun jwt(
         assetIds: String? = "fintlabs-no",
-        username: String = "user@client.fintlabs.no",
+        username: String? = "user@client.fintlabs.no",
         scopes: List<String>? = listOf("fint-client"),
         roles: List<String>? = null
     ) = mockk<Jwt>(relaxed = true).apply {
@@ -27,6 +28,13 @@ internal class CorePrincipalTest {
         every { getClaimAsString(USERNAME) } returns username
         every { getClaimAsStringList(SCOPE) } returns scopes
         every { getClaimAsStringList(ROLES) } returns roles
+    }
+
+    @Test
+    fun `rejects a missing username claim`() {
+        assertThatIllegalArgumentException()
+            .isThrownBy { CorePrincipal(jwt(username = null), emptyList()) }
+            .withMessage("JWT must contain the '$USERNAME' claim")
     }
 
     @Nested

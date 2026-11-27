@@ -15,7 +15,9 @@ class CorePrincipal(
     authorities: Collection<GrantedAuthority>
 ) : JwtAuthenticationToken(jwt, authorities) {
 
-    val username: String = jwt.getClaimAsString(USERNAME)
+    val username: String = requireNotNull(jwt.getClaimAsString(USERNAME)) {
+        "JWT must contain the '$USERNAME' claim"
+    }
 
     val assets: Set<String> = jwt.getClaimAsString(FINT_ASSET_IDS)
         ?.split(",")

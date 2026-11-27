@@ -32,8 +32,8 @@ All of that was removed in the 4.x rewrite. The library is now just `CorePrincip
 
 - **Security config is service-specific.** The one-size-fits-all filter chain forced every service to opt out piecemeal whenever it needed a different rule (public endpoints, actuator exposure, custom matchers). Owning the `SecurityFilterChain` in each service is clearer than fighting an opinionated default.
 - **OPA is a policy choice, not a library concern.** Not every service authorizes via OPA, and the ones that do want to control the client, caching, request shape, and failure behavior themselves. Bundling an OPA client here coupled unrelated services to the same OPA version, URL convention, and envelope format.
-- **Transitive weight.** Shipping WebFlux + Reactor + Jackson-Kotlin as `api` dependencies leaked those choices into every consumer, including services on Spring MVC. The current library has a single `api` dependency: `spring-boot-starter-oauth2-resource-server`.
-- **Spring Boot 3/4 compatibility.** The old auto-configured chain was tied to APIs that shifted between Boot 3 and Boot 4. Keeping the library to plain types (`Converter<Jwt, AbstractAuthenticationToken>`, `EnvironmentPostProcessor`) means one artifact works on both.
+- **Transitive weight.** Shipping WebFlux + Reactor + Jackson-Kotlin as `api` dependencies leaked those choices into every consumer, including services on Spring MVC. The current library has a single `api` dependency: `spring-boot-starter-security-oauth2-resource-server`.
+- **Spring Boot upgrades.** The old auto-configured chain was tied to APIs that shifted between Boot versions. The library now focuses on principal conversion and an overridable issuer default. This version targets Spring Boot 4.2.0 and uses its replacement `org.springframework.boot.EnvironmentPostProcessor` API.
 
 **What to do instead:**
 
@@ -88,6 +88,6 @@ spring:
 
 ## Compatibility
 
-- Spring Boot 3.x and 4.x (one artifact for both — verified against the stable `oauth2-resource-server` and deprecated-but-present `EnvironmentPostProcessor` APIs)
+- Spring Boot 4.2.0 (this version no longer supports Boot 3.x because the issuer-default processor uses the Boot 4 API)
 - JDK 21+
 - Kotlin 2.x
